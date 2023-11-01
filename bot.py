@@ -28,8 +28,6 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-    #message = message.lower();
-    #if message.content.startswith('$meteo'):
     if "météo" or "meteo" in message.content.lower():
         if pluie()[0]:
             meteo = f"Attention les enfants il risque de pleuvoir avec {pluie()[1]}% de chance demain, n'oubliez pas votre parapluie."
@@ -39,5 +37,4 @@ async def on_message(message):
 
         await message.channel.send(meteo)
 
-pluie()
 client.run(TOKEN)
