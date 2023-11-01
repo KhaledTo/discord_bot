@@ -9,7 +9,9 @@ load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 METEO_TOKEN = os.getenv('METEO_TOKEN')
 
-client = discord.Client(intents=discord.Intents.default())
+intents = discord.Intents.default()
+intents.message_content = True
+client = discord.Client(intents=intents)
 
 def pluie():
   response = requests.get(f"https://api.weatherapi.com/v1/forecast.json?key={METEO_TOKEN}&q=Paris&days=1&aqi=no&alerts=no")
@@ -28,13 +30,21 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-    if "météo" or "meteo" in message.content.lower():
-        if pluie()[0]:
-            meteo = f"Attention les enfants il risque de pleuvoir avec {pluie()[1]}% de chance demain, n'oubliez pas votre parapluie."
+    elif "monsieur" in message.content.lower():
+        await message.channel.send('Bonjour !')
+
+    elif "hello" in message.content.lower() or "bonjour" in message.content.lower():
+        await message.channel.send('Hello !')
+
+    elif "meteo" in message.content.lower() or "météo"  in message.content.lower():
+        il_va_pleuvoir, chance_pluie = pluie()
+        channel = message.channel
+        if il_va_pleuvoir:
+            meteo = f"Attention les enfants il risque de pleuvoir avec {chance_pluie}% de chance demain, n'oubliez pas votre parapluie."
 
         else:
             meteo = "Il ne devrait pas pleuvoir demain."
 
-        await message.channel.send(meteo)
+        await channel.send(meteo)
 
 client.run(TOKEN)
